@@ -71,9 +71,17 @@ const ResultList = () => {
                 primary={<Typography variant='h6'>{result.title}</Typography>}
                 secondary={
                   <>
-                    {result.snippet}
-                    <br />
-                    <span style={{ fontSize: '0.8rem', color: 'gray' }}>
+                    <Typography
+                      component={'div'}
+                      dangerouslySetInnerHTML={{ __html: result.snippet }}
+                    />
+                    <span
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'gray',
+                        marginTop: '10px',
+                      }}
+                    >
                       {moment(result.timestamp).format('MMMM D, YYYY')}
                     </span>
                   </>

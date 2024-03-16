@@ -1,26 +1,10 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearSelectedResult } from '../redux/searchSlice'
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Typography,
-  Box,
-} from '@mui/material'
-import { makeStyles } from '@mui/styles'
-
-const useStyles = makeStyles((theme) => {
-  return {
-    modal: {
-      backgroundColor: theme.palette.background.paper,
-      padding: theme.spacing(2),
-    },
-  }
-})
+import { Dialog, DialogTitle, DialogContent, Typography } from '@mui/material'
+import moment from 'moment'
 
 const ResultModal = () => {
-  const classes = useStyles()
   const dispatch = useDispatch()
   const selectedResult = useSelector((state) => state.search.selectedResult)
 
@@ -32,12 +16,20 @@ const ResultModal = () => {
       }}
     >
       {selectedResult && (
-        <Box className={classes.modal}>
+        <>
           <DialogTitle>{selectedResult.title}</DialogTitle>
           <DialogContent>
-            <Typography>{selectedResult.snippet}</Typography>
+            <Typography
+              component={'div'}
+              dangerouslySetInnerHTML={{ __html: selectedResult.snippet }}
+            />
+            <span
+              style={{ fontSize: '0.8rem', color: 'gray', marginTop: '10px' }}
+            >
+              {moment(selectedResult.timestamp).format('MMMM D, YYYY')}
+            </span>
           </DialogContent>
-        </Box>
+        </>
       )}
     </Dialog>
   )

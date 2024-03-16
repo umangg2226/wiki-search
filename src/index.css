@@ -44,3 +44,7 @@ html {
 ::-webkit-resizer {
   background-color: #666;
 }
+
+.searchmatch {
+  color: #2196f3;
+}
