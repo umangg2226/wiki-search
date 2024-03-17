@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useRef } from 'react'
 import { useDispatch } from 'react-redux'
-import { TextField, InputAdornment } from '@mui/material'
+import { TextField, InputAdornment, IconButton } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import SearchIcon from '@mui/icons-material/Search'
 import { fetchSearchResultsAsync } from '../redux/searchSlice'
 import debounce from 'lodash.debounce'
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut'
+import { Search, Clear } from '@mui/icons-material'
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -33,8 +33,7 @@ const SearchBox = () => {
 
   useKeyboardShortcut('k', focusInputRef)
 
-  const handleSearch = (event) => {
-    const term = event.target.value
+  const handleSearch = (term) => {
     setSearchTerm(term)
     if (term.trim()) {
       debounceSearch(term.trim())
@@ -49,12 +48,19 @@ const SearchBox = () => {
       fullWidth
       className={classes.searchBox}
       value={searchTerm}
-      onChange={handleSearch}
+      onChange={(e) => handleSearch(e.target.value)}
       placeholder='Search Wikipedia...'
       InputProps={{
         startAdornment: (
           <InputAdornment position='start'>
-            <SearchIcon />
+            <Search />
+          </InputAdornment>
+        ),
+        endAdornment: searchTerm && (
+          <InputAdornment position='end'>
+            <IconButton color='error' onClick={() => handleSearch('')}>
+              <Clear />
+            </IconButton>
           </InputAdornment>
         ),
       }}
