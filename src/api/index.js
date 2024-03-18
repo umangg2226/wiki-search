@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const API_BASE_URL = 'https://en.wikipedia.org/w/api.php'
 
-export const fetchSearchResults = async (searchTerm) => {
+export const fetchSearchResults = async (searchTerm, signal) => {
   const params = {
     action: 'query',
     list: 'search',
@@ -15,7 +15,10 @@ export const fetchSearchResults = async (searchTerm) => {
     srsearch: searchTerm,
   }
 
-  const response = await axios.get(API_BASE_URL, { params })
+  const response = await axios.get(API_BASE_URL, {
+    params,
+    signal,
+  })
 
   return response.data.query.search
 }

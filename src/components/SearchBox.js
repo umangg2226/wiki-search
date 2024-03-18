@@ -20,6 +20,7 @@ const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useDispatch()
   const inputRef = useRef(null)
+  const abortControllerRef = useRef(null)
 
   const focusInputRef = useCallback(() => {
     inputRef.current?.focus()
@@ -27,7 +28,19 @@ const SearchBox = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debounceSearch = useCallback(
-    debounce((term) => dispatch(fetchSearchResultsAsync(term)), 350),
+    debounce(async (term) => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+
+      const abortController = new AbortController()
+
+      abortControllerRef.current = abortController
+
+      dispatch(
+        fetchSearchResultsAsync({ term, signal: abortController.signal })
+      )
+    }, 350),
     []
   )
 
@@ -35,11 +48,7 @@ const SearchBox = () => {
 
   const handleSearch = (term) => {
     setSearchTerm(term)
-    if (term.trim()) {
-      debounceSearch(term.trim())
-    } else {
-      dispatch(fetchSearchResultsAsync(''))
-    }
+    debounceSearch(term.trim())
   }
 
   return (

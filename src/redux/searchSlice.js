@@ -12,13 +12,13 @@ const initialState = {
 
 export const fetchSearchResultsAsync = createAsyncThunk(
   'search/fetchSearchResultsAsync',
-  async (searchTerm, { rejectWithValue }) => {
+  async ({ term, signal }, { rejectWithValue }) => {
     try {
-      if (!searchTerm) throw new Error('No search term')
-      const results = await fetchSearchResults(searchTerm)
+      if (!term) throw new Error('No search term')
+      const results = await fetchSearchResults(term, signal)
       return results
     } catch (e) {
-      return rejectWithValue(e.message)
+      return rejectWithValue(e.code === 'ERR_CANCELED' ? e.code : e.message)
     }
   }
 )
@@ -47,10 +47,12 @@ const searchSlice = createSlice({
         state.loaded = true
       })
       .addCase(fetchSearchResultsAsync.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.error.message
-        state.results = []
-        state.loaded = false
+        if (action.payload !== 'ERR_CANCELED') {
+          state.loading = false
+          state.error = action.error.message
+          state.results = []
+          state.loaded = false
+        }
       })
   },
 })
